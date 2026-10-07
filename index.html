@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#282b29">
+<title>felden</title>
+<meta name="description" content="felden – akustische Musik aus Leinfelden bei Stuttgart.">
+<meta property="og:title" content="felden">
+<meta property="og:description" content="Aus der Stille entstanden. Ein musikalisches Feld, in dem immer wieder Neues entstehen kann.">
+<meta property="og:image" content="images/feld-abend.jpg">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  :root{
+    --bg:#282b29;
+    --bg-2:#222523;
+    --fg:#eeebe4;
+    --mute:#8f938f;
+    --line:#3c403d;
+    --accent:#d8b878;
+    --f:"Inter Tight", "Helvetica Neue", Arial, sans-serif;
+    --pad:clamp(16px,4vw,56px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:var(--f);font-weight:400;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--accent);color:var(--bg)}
+
+  /* Header */
+  header{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:20px var(--pad);transition:background .4s,padding .4s}
+  header.solid{background:rgba(40,43,41,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding-top:14px;padding-bottom:14px}
+  .logo{font-weight:700;font-size:24px;letter-spacing:-.04em}
+  .logo span{color:var(--accent)}
+  header nav{display:flex;gap:clamp(16px,3vw,40px);align-items:center}
+  header nav a{font-size:14px;font-weight:500;position:relative}
+  header nav a::after{content:"";position:absolute;left:0;bottom:-4px;height:1px;width:0;background:var(--fg);transition:width .3s}
+  header nav a:hover::after{width:100%}
+  .lang{font-size:12px;color:var(--mute);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+
+  /* Hero */
+  .hero{padding:clamp(130px,20vh,200px) var(--pad) clamp(40px,6vw,72px)}
+  .hero h1{font-weight:600;font-size:clamp(46px,9.4vw,152px);line-height:.95;letter-spacing:-.045em;max-width:14ch}
+  .hero h1 .dim{color:var(--mute)}
+  .hero .meta{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-top:clamp(36px,5vw,64px)}
+  .hero .meta p{max-width:44ch;color:#c9c6bf;font-size:clamp(17px,1.4vw,20px)}
+  .scroll{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:10px}
+  .scroll i{display:block;width:1px;height:38px;background:var(--mute);animation:pulse 2.4s infinite ease-in-out;transform-origin:top}
+  @keyframes pulse{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  /* Reel image */
+  .reel{position:relative;margin:0 var(--pad);overflow:hidden;border-radius:4px;aspect-ratio:16/8}
+  .reel img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.6s cubic-bezier(.2,.7,.2,1)}
+  .reel.in img{transform:scale(1)}
+  .reel .tag{position:absolute;left:24px;bottom:22px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500}
+  .reel .tag b{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--fg);color:var(--bg);font-size:14px}
+
+  /* Marquee */
+  .marquee{display:flex;justify-content:center;align-items:baseline;gap:.9em;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:clamp(64px,9vw,120px);padding:22px 0;white-space:nowrap;font-size:clamp(20px,6.6vw,56px)}
+  .marquee span{font-weight:300;letter-spacing:-.02em}
+  .marquee span.o{color:transparent;-webkit-text-stroke:1px var(--mute)}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  section{padding:clamp(80px,11vw,150px) var(--pad)}
+
+  /* Tabs */
+  .tabs{display:flex;gap:clamp(6px,1.6vw,10px);flex-wrap:nowrap;margin-bottom:clamp(48px,6vw,80px)}
+  .tabs a{flex:0 1 auto;min-width:0;text-align:center;white-space:nowrap;font-size:clamp(12px,3.6vw,14px);font-weight:500;padding:9px clamp(10px,3vw,18px);border:1px solid var(--line);border-radius:99px;transition:background .25s,color .25s,border-color .25s}
+  .tabs a:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+  /* Statement */
+  .statement{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:clamp(24px,5vw,80px)}
+  .kicker{font-size:13px;font-weight:500;color:var(--mute);letter-spacing:.02em}
+  .kicker::before{content:"● ";color:var(--accent);font-size:10px;vertical-align:2px}
+  .statement p{font-size:clamp(26px,3.3vw,48px);line-height:1.15;letter-spacing:-.03em;font-weight:400}
+  .statement p em{font-style:normal;color:var(--mute)}
+
+  /* Songs = work grid */
+  .head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;margin-bottom:36px;flex-wrap:wrap}
+  .head h2{font-weight:600;font-size:clamp(40px,6vw,88px);letter-spacing:-.045em;line-height:1}
+  .head p{color:var(--mute);max-width:38ch;font-size:15px}
+  .work{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,24px)}
+  .card{position:relative;cursor:default}
+  .card .img{overflow:hidden;border-radius:4px;aspect-ratio:4/5;background:var(--bg-2)}
+  .card img{width:100%;height:100%;object-fit:cover;transition:transform 1s cubic-bezier(.2,.7,.2,1),filter .6s}
+  .card:hover img{transform:scale(1.05);filter:brightness(.55)}
+  .card .over{position:absolute;top:0;left:0;right:0;aspect-ratio:4/5;display:grid;place-items:center;opacity:0;transition:opacity .4s}
+  .card:hover .over{opacity:1}
+  .card .over span{border:1px solid var(--fg);border-radius:99px;padding:10px 20px;font-size:13px;font-weight:500;max-width:80%;text-align:center}
+  .card h3{font-weight:500;font-size:22px;letter-spacing:-.02em;margin-top:16px}
+  .card small{color:var(--mute);font-size:14px}
+
+  /* Story timeline */
+  .story{background:var(--bg-2)}
+  .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:clamp(24px,5vw,80px);padding:clamp(28px,3.4vw,44px) 0;border-top:1px solid var(--line)}
+  .row:last-child{border-bottom:1px solid var(--line)}
+  .row .yr{font-weight:600;font-size:clamp(44px,6vw,92px);letter-spacing:-.05em;line-height:.9;color:var(--fg)}
+  .row .yr small{display:block;font-size:13px;font-weight:500;letter-spacing:0;color:var(--accent);margin-top:12px}
+  .row p{color:#c9c6bf;max-width:62ch;margin-bottom:1em}
+  .row p:last-child{margin-bottom:0}
+  .row p.big{font-size:clamp(20px,1.9vw,26px);line-height:1.35;letter-spacing:-.015em;color:var(--fg)}
+
+  /* Team */
+  .team{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,24px)}
+  .person{border-top:1px solid var(--line);padding-top:18px}
+  .person h3{font-weight:600;font-size:clamp(28px,3vw,44px);letter-spacing:-.04em;line-height:1}
+  .person p{color:var(--mute);font-size:14px;margin-top:8px}
+  .person.five{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .person.five h3{color:var(--mute)}
+  .bandpic{margin-top:clamp(36px,5vw,64px);display:grid;grid-template-columns:2fr 1fr;gap:clamp(12px,1.6vw,24px)}
+  .bandpic div{overflow:hidden;border-radius:4px}
+  .bandpic img{width:100%;height:100%;object-fit:cover;transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+  .bandpic div:hover img{transform:scale(1.04)}
+  .bandpic div:first-child{aspect-ratio:3/2}
+
+  /* Values like skills */
+  .values{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line)}
+  .value{padding:32px 28px 32px 0;border-right:1px solid var(--line)}
+  .value + .value{padding-left:28px}
+  .value:last-child{border-right:0}
+  .value b{display:block;font-size:13px;color:var(--accent);font-weight:500;margin-bottom:18px}
+  .value h3{font-weight:500;font-size:26px;letter-spacing:-.03em;margin-bottom:10px}
+  .value p{color:var(--mute);font-size:15px}
+
+  /* Contact */
+  .contact{padding-bottom:0}
+  .contact .big{font-weight:600;font-size:clamp(56px,13vw,220px);letter-spacing:-.06em;line-height:.88;display:inline-block;transition:color .3s}
+  .contact .big:hover{color:var(--accent)}
+  .contact .big .arr{display:inline-block;transition:transform .4s}
+  .contact .big:hover .arr{transform:translate(.08em,-.08em)}
+  .contact .sub{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;margin-top:36px;color:var(--mute);font-size:15px}
+
+  .welcome{overflow:hidden;white-space:nowrap;margin-top:clamp(64px,8vw,110px);border-top:1px solid var(--line);padding:18px 0}
+  .welcome .track{display:inline-flex;animation:scroll 50s linear infinite}
+  .welcome span{font-size:13px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);padding-right:3em}
+
+  footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:22px var(--pad) 28px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
+  footer nav{display:flex;flex-wrap:wrap;gap:8px 22px}
+  footer a:hover{color:var(--fg)}
+
+  /* Reveal */
+  .r{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+  .r.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .r{opacity:1;transform:none;transition:none}
+    .welcome .track,.scroll i{animation:none}
+    .reel img{transform:none}
+  }
+
+  @media (max-width:900px){
+    .statement,.row{grid-template-columns:1fr}
+    .work{grid-template-columns:1fr 1fr}
+    .work .card:last-child{grid-column:1/-1}
+    .work .card:last-child .img,.work .card:last-child .over{aspect-ratio:16/10}
+    .team{grid-template-columns:1fr 1fr;row-gap:28px}
+    .values{grid-template-columns:1fr}
+    .value,.value + .value{padding:26px 0;border-right:0;border-bottom:1px solid var(--line)}
+    .bandpic{grid-template-columns:1fr}
+    .reel{aspect-ratio:4/3}
+  }
+  @media (max-width:600px){
+    header nav a.hide-s{display:none}
+    .work{grid-template-columns:1fr}
+    .work .card .img,.work .card .over{aspect-ratio:4/3!important}
+    .lang{display:none}
+  }
+
+  /* YouTube – Zwei-Klick-Lösung (DSGVO) */
+  .yt{position:relative;aspect-ratio:16/9;overflow:hidden;background:#000}
+  .yt img{width:100%;height:100%;object-fit:cover;opacity:.78;transition:transform 1.2s cubic-bezier(.2,.7,.2,1),opacity .6s}
+  .yt:hover img{transform:scale(1.03);opacity:.65}
+  .yt-btn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.4));border:0;color:#fff;cursor:pointer;font:inherit}
+  .yt-circle{width:clamp(64px,7vw,92px);height:clamp(64px,7vw,92px);border-radius:50%;border:1px solid rgba(255,255,255,.9);display:grid;place-items:center;transition:background .35s,color .35s,transform .35s}
+  .yt-circle svg{width:34%;height:34%;margin-left:6%}
+  .yt-btn:hover .yt-circle,.yt-btn:focus-visible .yt-circle{background:#fff;color:#111;transform:scale(1.06)}
+  .yt-t{font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+  .yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .yt-note{font-size:12.5px;line-height:1.6;opacity:.72;margin-top:14px;max-width:80ch}
+  .yt-note a{text-decoration:underline;text-underline-offset:2px}
+  .reel-wrap{margin:0 var(--pad)}
+  .reel-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:15px;font-weight:500}
+  .reel-head em{font-style:normal;color:var(--mute)}
+  .yt{border-radius:4px}
+  .yt-note{color:var(--mute);opacity:1}
+  .socials{display:flex;gap:10px;flex-wrap:wrap}
+  .socials a{color:var(--fg);font-weight:500;padding:9px 18px;border:1px solid var(--line);border-radius:99px;transition:background .25s,color .25s,border-color .25s}
+  .socials a:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+  .contact .sub{align-items:center}
+  .card{display:block;cursor:pointer}
+  .tracks{list-style:none;margin-top:0;border-top:1px solid var(--line)}
+  .tracks a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);transition:padding .35s,color .25s}
+  .tracks a:hover{padding-left:12px;color:var(--accent)}
+  .tracks .n{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+  .tracks .t{font-size:clamp(28px,4vw,56px);font-weight:500;letter-spacing:-.03em}
+  .tracks .k{font-size:13px;color:var(--mute)}
+  .all{display:inline-block;margin-top:28px;font-size:14px;font-weight:500;padding:9px 18px;border:1px solid var(--line);border-radius:99px;transition:background .25s,color .25s,border-color .25s}
+  .all:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+  @media (max-width:600px){.tracks a{grid-template-columns:36px minmax(0,1fr)}.tracks .k{grid-column:2}}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <a class="logo" href="#top">felden<span>.</span></a>
+  <nav>
+    <a href="#video" class="hide-s">Video</a>
+    <a href="#musik" class="hide-s">Musik</a>
+    <a href="#geschichte">Geschichte</a>
+    <a href="#band">Band</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <div class="hero">
+    <h1 class="r">Aus der Stille entstanden. <span class="dim">Ein Feld für neue Klänge.</span></h1>
+    <div class="meta">
+      <p class="r">felden ist eine akustische Band aus Leinfelden bei Stuttgart. Vier Musiker, deren wichtigste Grundlage das Loslassen, das Aufeinander-Hören und das gegenseitige Vertrauen ist.</p>
+    </div>
+  </div>
+
+  <div class="reel-wrap r" id="video">
+    <div class="reel-head"><span class="kicker">Neues Video</span><span>fine beginning <em>— Radio Edit</em></span></div>
+    <div class="yt" data-id="N66QxHXJvBc" data-title="felden – fine beginning (Radio Edit) [Official Video]">
+      <img src="images/wiese-live.jpg" alt="Vorschaubild: felden spielen auf einer Wiese" loading="lazy">
+      <button class="yt-btn" type="button" aria-label="Video von YouTube laden und abspielen">
+        <span class="yt-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span>
+        <span class="yt-t">Video abspielen</span>
+      </button>
+    </div>
+    <p class="yt-note">Beim Abspielen wird das Video von YouTube (Google) geladen. Dabei werden Daten wie deine IP-Adresse an Google übertragen. Mehr dazu in der <a href="datenschutz.html">Datenschutzerklärung</a>. <a href="https://youtu.be/N66QxHXJvBc" target="_blank" rel="noopener">Direkt auf YouTube ansehen</a></p>
+  </div>
+
+  <div class="marquee">
+    <span>Loslassen</span><span class="o">Zuhören</span><span>Vertrauen</span>
+  </div>
+
+  <section>
+    <nav class="tabs r" aria-label="Abschnitte">
+      <a href="#musik">Musik</a><a href="#geschichte">Geschichte</a><a href="#band">Band</a><a href="#haltung">Haltung</a>
+    </nav>
+    <div class="statement">
+      <div class="kicker r">Über uns</div>
+      <p class="r">Akustische Songs, die auf Grunge, Soul und Barock verweisen – <em>getragen von Ungezwungenheit, Zärtlichkeit und dem Vertrauen, einander zuzuhören.</em></p>
+    </div>
+  </section>
+
+  <section id="musik" style="padding-top:0">
+    <div class="head">
+      <h2 class="r">Musik</h2>
+      <p class="r">Unsere Songs – zu hören auf Spotify.</p>
+    </div>
+    <ol class="tracks r">
+      <li><a href="https://open.spotify.com/artist/2TYIWhqs4LQytH0IXlrEBR" target="_blank" rel="noopener"><span class="n">01</span><span class="t">get along</span><span class="k">Unser meistgehörter Song</span></a></li>
+      <li><a href="https://open.spotify.com/artist/2TYIWhqs4LQytH0IXlrEBR" target="_blank" rel="noopener"><span class="n">02</span><span class="t">fine beginning</span><span class="k">Radio Edit · auch als Video</span></a></li>
+      <li><a href="https://open.spotify.com/artist/2TYIWhqs4LQytH0IXlrEBR" target="_blank" rel="noopener"><span class="n">03</span><span class="t">golden people</span><span class="k">Ein verrauchter Soul-Club der 70er</span></a></li>
+    </ol>
+    <a class="all r" href="https://open.spotify.com/artist/2TYIWhqs4LQytH0IXlrEBR" target="_blank" rel="noopener">Alle Songs auf Spotify</a>
+  </section>
+
+  <section class="story" id="geschichte">
+    <div class="head">
+      <h2 class="r">Geschichte</h2>
+      <p class="r">Von „Lukas“ über „Klein-Lukas“ zu felden.</p>
+    </div>
+
+    <div class="row r">
+      <div class="yr">2020<small>Klein-Lukas</small></div>
+      <div>
+        <p class="big">2020 stand die Welt still, wir waren alle gezwungen, uns zurückzuziehen. Es war die Geburtsstunde von „Klein-Lukas“, einem Duo zweier alter Freunde, die sich bereits an der Uni kennengelernt hatten.</p>
+        <p>In ihrer vorherigen Band „Lukas“, die sich durch die äußeren Umstände auflösen musste, hatte Heiner Gitarre und Hermann Bass gespielt. In der Abgeschiedenheit eines alten Tübinger Ballettsaals entstanden zwischen den beiden neue Klänge. Heiner übernahm den Gesang, Hermann die Gitarre.</p>
+        <p>Aus dieser vertrauten Nähe entstanden akustische Klänge, die auf die unterschiedlichen Genres verwiesen, aus denen die beiden kamen. Verantwortlich für die musikalische Vielfalt waren die Ungezwungenheit und das Vertrauen, das die beiden beim gemeinsamen Musizieren zuließen.</p>
+      </div>
+    </div>
+
+    <div class="row r">
+      <div class="yr">2021<small>Christian kommt dazu</small></div>
+      <div><p>Etwa ein Jahr später kam Christian dazu, der das Duo mit seinen virtuosen Beats auf der Cajón und den magischen Klängen eines Didgeridoos ergänzte. Erste Auftritte folgten 2022.</p></div>
+    </div>
+
+    <div class="row r">
+      <div class="yr">2023<small>Uli am Keyboard</small></div>
+      <div><p>Uli schloss sich mit seinem Keyboard dem Trio an. Der Organist war bereits in den Jahren vor 2020 Mitglied von „Lukas“ gewesen. Durch den Einfluss von Christian und Uli veränderte sich die Musik noch einmal, wurde breiter und bunter – und dennoch versuchten die vier, die Zärtlichkeit und das Ungezwungene dabei nicht zu verlieren.</p></div>
+    </div>
+
+    <div class="row r">
+      <div class="yr">2024<small>felden</small></div>
+      <div><p>Die Band nahm ihren heutigen Namen an. Er geht zurück auf den neuen Probeort in Leinfelden bei Stuttgart, steht aber auch für die natürlichen, unverstellten Klänge der vier Musiker – ein musikalisches Feld, in dem immer wieder Neues entstehen kann.</p></div>
+    </div>
+
+    <div class="row r">
+      <div class="yr">2025<small>Erstes Album</small></div>
+      <div><p>Unter der zauberhaften Sensibilität des Tontechnikers „Magic“, alias Yannik, dem fünften Mann im Bunde, entstand ein erstes Album. Weitere Auftritte folgten.</p></div>
+    </div>
+  </section>
+
+  <section id="band">
+    <div class="head">
+      <h2 class="r">Band</h2>
+      <p class="r">Vier Musiker. Und ein fünfter am Mischpult.</p>
+    </div>
+    <div class="team">
+      <div class="person r"><h3>Heiner</h3><p>Gesang</p></div>
+      <div class="person r"><h3>Hermann</h3><p>Gitarre</p></div>
+      <div class="person r"><h3>Christian</h3><p>Cajón, Didgeridoo</p></div>
+      <div class="person r"><h3>Uli</h3><p>Keyboard</p></div>
+      <div class="person five r"><h3>„Magic“ Yannik</h3><p>Ton &amp; Produktion</p></div>
+    </div>
+    <div class="bandpic r">
+      <div><img src="images/feld-abend.jpg" alt="Die Band im Weizenfeld bei Sonnenuntergang" loading="lazy"></div>
+      <div><img src="images/treppe.jpg" alt="Die Band lachend auf einer Steintreppe" loading="lazy" style="object-position:50% 30%"></div>
+    </div>
+  </section>
+
+  <section id="haltung" style="padding-top:0">
+    <div class="values">
+      <div class="value r"><b>01</b><h3>Loslassen</h3><p>Ungezwungen spielen und dem Moment Raum geben.</p></div>
+      <div class="value r"><b>02</b><h3>Aufeinander hören</h3><p>Leise genug sein, damit die anderen gehört werden.</p></div>
+      <div class="value r"><b>03</b><h3>Vertrauen</h3><p>Die Grundlage, auf der immer wieder Neues entstehen kann.</p></div>
+    </div>
+  </section>
+
+  <section class="contact" id="kontakt">
+    <div class="kicker r" style="margin-bottom:24px">Kontakt &amp; Konzerte</div>
+    <a class="big r" href="https://www.instagram.com/felden.music" target="_blank" rel="noopener">Hören wir uns</a>
+    <div class="sub r">
+      <span>Neuigkeiten und Anfragen auf Instagram, Musik auf YouTube und Spotify</span>
+      <span class="socials">
+        <a href="https://www.instagram.com/felden.music" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.youtube.com/@feldengreatmusic" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://open.spotify.com/artist/2TYIWhqs4LQytH0IXlrEBR" target="_blank" rel="noopener">Spotify</a>
+      </span>
+    </div>
+    <div class="welcome" aria-hidden="true">
+      <div class="track">
+        <span>Willkommen</span><span>Welcome</span><span>Bienvenue</span><span>Benvenuti</span><span>Bienvenidos</span><span>Welkom</span>
+        <span>Willkommen</span><span>Welcome</span><span>Bienvenue</span><span>Benvenuti</span><span>Bienvenidos</span><span>Welkom</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> felden · Leinfelden bei Stuttgart</span>
+  <nav>
+    <a href="#musik">Musik</a><a href="#geschichte">Geschichte</a><a href="#band">Band</a>
+    <a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+  const hdr = document.getElementById('hdr');
+  const onScroll = () => hdr.classList.toggle('solid', window.scrollY > 40);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), {threshold:.1, rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+  /* YouTube erst nach Klick laden (youtube-nocookie.com) */
+  document.querySelectorAll('.yt').forEach(el => el.querySelector('.yt-btn').addEventListener('click', () => {
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + el.dataset.id + '?autoplay=1&rel=0&modestbranding=1';
+    f.title = el.dataset.title;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    el.replaceChildren(f);
+  }));
+</script>
+</body>
+</html>
